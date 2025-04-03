@@ -22,36 +22,10 @@
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <div class="row mt-4">
                     <div class="col-md-6">
-                        <h3>Add Company</h3>
-                        <div class="mb-3">
-                            <label class="form-label">Company Name:</label>
-                            <input type="text" id="company" class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">HR Name:</label>
-                            <input type="text" id="hrName" class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">HR Contact:</label>
-                            <input type="text" id="hrContact" class="form-control">
-                        </div>
-                        <button class="btn btn-primary" onclick="addCompany()">Add Company</button>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCompanyModal">Add Company</button>
                     </div>
                     <div class="col-md-6">
-                        <h3>Add Interview Round</h3>
-                        <div class="mb-3">
-                            <label class="form-label">Round No:</label>
-                            <input type="number" id="roundNo" class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Date:</label>
-                            <input type="date" id="roundDate" class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Status:</label>
-                            <input type="text" id="roundStatus" class="form-control">
-                        </div>
-                        <button class="btn btn-success" onclick="addRound()">Add Round</button>
+                        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addRoundModal">Add Round</button>
                     </div>
                 </div>
                 <h3 class="mt-4">Saved Companies & Rounds</h3>
@@ -64,6 +38,7 @@
                             <th>Round No</th>
                             <th>Date</th>
                             <th>Status</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -74,6 +49,46 @@
     <footer class="bg-dark text-white text-center py-3 mt-4">
         <p>&copy; 2025 Interview Tracker</p>
     </footer>
+
+    <!-- Add Company Modal -->
+    <div class="modal fade" id="addCompanyModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Company</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="company" class="form-control mb-2" placeholder="Company Name">
+                    <input type="text" id="hrName" class="form-control mb-2" placeholder="HR Name">
+                    <input type="text" id="hrContact" class="form-control mb-2" placeholder="HR Contact">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" onclick="addCompany()" data-bs-dismiss="modal">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Round Modal -->
+    <div class="modal fade" id="addRoundModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Interview Round</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="number" id="roundNo" class="form-control mb-2" placeholder="Round No">
+                    <input type="date" id="roundDate" class="form-control mb-2">
+                    <input type="text" id="roundStatus" class="form-control mb-2" placeholder="Status">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" onclick="addRound()" data-bs-dismiss="modal">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         let companies = JSON.parse(localStorage.getItem('companies')) || [];
@@ -109,8 +124,8 @@
             let tableBody = document.querySelector('#companyTable tbody');
             tableBody.innerHTML = '';
             
-            companies.forEach(company => {
-                company.rounds.forEach(round => {
+            companies.forEach((company, cIndex) => {
+                company.rounds.forEach((round, rIndex) => {
                     let row = tableBody.insertRow();
                     row.insertCell(0).textContent = company.company;
                     row.insertCell(1).textContent = company.hrName;
@@ -118,8 +133,17 @@
                     row.insertCell(3).textContent = round.roundNo;
                     row.insertCell(4).textContent = round.roundDate;
                     row.insertCell(5).textContent = round.roundStatus;
+                    let actionsCell = row.insertCell(6);
+                    actionsCell.innerHTML = `<button class='btn btn-warning btn-sm' onclick='editRecord(${cIndex}, ${rIndex})'>Edit</button> 
+                                            <button class='btn btn-danger btn-sm' onclick='deleteRecord(${cIndex}, ${rIndex})'>Delete</button>`;
                 });
             });
+        }
+
+        function deleteRecord(companyIndex, roundIndex) {
+            companies[companyIndex].rounds.splice(roundIndex, 1);
+            localStorage.setItem('companies', JSON.stringify(companies));
+            renderTable();
         }
 
         function renderCompanies() {
