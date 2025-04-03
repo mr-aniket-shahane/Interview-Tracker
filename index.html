@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Tracker</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 600px; margin: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f4f4f4; }
+        .button { margin-top: 10px; padding: 10px; background: blue; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Interview Tracker</h2>
+        <label>Company Name: <input type="text" id="company"></label><br>
+        <label>HR Name: <input type="text" id="hrName"></label><br>
+        <label>HR Contact: <input type="text" id="hrContact"></label><br>
+        <button class="button" onclick="addCompany()">Add Company</button>
+        
+        <h3>Interview Rounds</h3>
+        <label>Round No: <input type="number" id="roundNo"></label><br>
+        <label>Date: <input type="date" id="roundDate"></label><br>
+        <label>Status: <input type="text" id="roundStatus"></label><br>
+        <button class="button" onclick="addRound()">Add Round</button>
+
+        <h3>Saved Companies</h3>
+        <table id="companyTable">
+            <tr>
+                <th>Company</th>
+                <th>HR Name</th>
+                <th>HR Contact</th>
+                <th>Rounds</th>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+        let companies = JSON.parse(localStorage.getItem('companies')) || [];
+
+        function addCompany() {
+            let company = document.getElementById('company').value;
+            let hrName = document.getElementById('hrName').value;
+            let hrContact = document.getElementById('hrContact').value;
+            
+            let newCompany = { company, hrName, hrContact, rounds: [] };
+            companies.push(newCompany);
+            localStorage.setItem('companies', JSON.stringify(companies));
+            renderTable();
+        }
+
+        function addRound() {
+            let roundNo = document.getElementById('roundNo').value;
+            let roundDate = document.getElementById('roundDate').value;
+            let roundStatus = document.getElementById('roundStatus').value;
+            
+            if (companies.length === 0) {
+                alert('Add a company first!');
+                return;
+            }
+
+            companies[companies.length - 1].rounds.push({ roundNo, roundDate, roundStatus });
+            localStorage.setItem('companies', JSON.stringify(companies));
+            renderTable();
+        }
+
+        function renderTable() {
+            let table = document.getElementById('companyTable');
+            table.innerHTML = `<tr>
+                <th>Company</th>
+                <th>HR Name</th>
+                <th>HR Contact</th>
+                <th>Rounds</th>
+            </tr>`;
+            
+            companies.forEach(company => {
+                let row = table.insertRow();
+                row.insertCell(0).textContent = company.company;
+                row.insertCell(1).textContent = company.hrName;
+                row.insertCell(2).textContent = company.hrContact;
+                let roundsText = company.rounds.map(r => `Round ${r.roundNo} - ${r.roundDate} - ${r.roundStatus}`).join(', ');
+                row.insertCell(3).textContent = roundsText;
+            });
+        }
+
+        renderTable();
+    </script>
+</body>
+</html>
