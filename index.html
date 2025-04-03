@@ -4,37 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interview Tracker</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .container { max-width: 600px; margin: auto; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f4f4f4; }
-        .button { margin-top: 10px; padding: 10px; background: blue; color: white; border: none; cursor: pointer; }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h2>Interview Tracker</h2>
-        <label>Company Name: <input type="text" id="company"></label><br>
-        <label>HR Name: <input type="text" id="hrName"></label><br>
-        <label>HR Contact: <input type="text" id="hrContact"></label><br>
-        <button class="button" onclick="addCompany()">Add Company</button>
+    <div class="container mt-4">
+        <h2 class="mb-3">Interview Tracker</h2>
+        <div class="mb-3">
+            <label class="form-label">Company Name:</label>
+            <input type="text" id="company" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">HR Name:</label>
+            <input type="text" id="hrName" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">HR Contact:</label>
+            <input type="text" id="hrContact" class="form-control">
+        </div>
+        <button class="btn btn-primary" onclick="addCompany()">Add Company</button>
         
-        <h3>Interview Rounds</h3>
-        <label>Round No: <input type="number" id="roundNo"></label><br>
-        <label>Date: <input type="date" id="roundDate"></label><br>
-        <label>Status: <input type="text" id="roundStatus"></label><br>
-        <button class="button" onclick="addRound()">Add Round</button>
+        <h3 class="mt-4">Interview Rounds</h3>
+        <div class="mb-3">
+            <label class="form-label">Round No:</label>
+            <input type="number" id="roundNo" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Date:</label>
+            <input type="date" id="roundDate" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Status:</label>
+            <input type="text" id="roundStatus" class="form-control">
+        </div>
+        <button class="btn btn-success" onclick="addRound()">Add Round</button>
 
-        <h3>Saved Companies</h3>
-        <table id="companyTable">
-            <tr>
-                <th>Company</th>
-                <th>HR Name</th>
-                <th>HR Contact</th>
-                <th>Rounds</th>
-            </tr>
+        <h3 class="mt-4">Saved Companies</h3>
+        <table class="table table-bordered mt-3" id="companyTable">
+            <thead>
+                <tr>
+                    <th>Company</th>
+                    <th>HR Name</th>
+                    <th>HR Contact</th>
+                    <th>Round No</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
         </table>
     </div>
 
@@ -68,21 +84,19 @@
         }
 
         function renderTable() {
-            let table = document.getElementById('companyTable');
-            table.innerHTML = `<tr>
-                <th>Company</th>
-                <th>HR Name</th>
-                <th>HR Contact</th>
-                <th>Rounds</th>
-            </tr>`;
+            let tableBody = document.querySelector('#companyTable tbody');
+            tableBody.innerHTML = '';
             
             companies.forEach(company => {
-                let row = table.insertRow();
-                row.insertCell(0).textContent = company.company;
-                row.insertCell(1).textContent = company.hrName;
-                row.insertCell(2).textContent = company.hrContact;
-                let roundsText = company.rounds.map(r => `Round ${r.roundNo} - ${r.roundDate} - ${r.roundStatus}`).join(', ');
-                row.insertCell(3).textContent = roundsText;
+                company.rounds.forEach(round => {
+                    let row = tableBody.insertRow();
+                    row.insertCell(0).textContent = company.company;
+                    row.insertCell(1).textContent = company.hrName;
+                    row.insertCell(2).textContent = company.hrContact;
+                    row.insertCell(3).textContent = round.roundNo;
+                    row.insertCell(4).textContent = round.roundDate;
+                    row.insertCell(5).textContent = round.roundStatus;
+                });
             });
         }
 
